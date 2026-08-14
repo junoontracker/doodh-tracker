@@ -25,7 +25,7 @@ export default function AnimalsTab() {
   return (
     <div className="space-y-4">
       <form onSubmit={handleAdd} className="bg-emerald-900/50 rounded-2xl p-4 border border-emerald-800 space-y-3">
-        <h3 className="text-white font-bold">🐄 Naya Janwar Add Karo</h3>
+        <h3 className="text-white font-bold">🐾 Naya Janwar Add Karo</h3>
 
         <div>
           <label className="text-emerald-400 text-xs font-semibold block mb-1">Prakar</label>
@@ -33,7 +33,7 @@ export default function AnimalsTab() {
             <button
               type="button"
               onClick={() => setType('gaay')}
-              className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+              className={`py-3 rounded-lg text-base font-bold transition-colors ${
                 type === 'gaay' ? 'bg-amber-500 text-emerald-950' : 'bg-emerald-950/60 text-emerald-400 border border-emerald-700'
               }`}
             >
@@ -42,7 +42,7 @@ export default function AnimalsTab() {
             <button
               type="button"
               onClick={() => setType('bhains')}
-              className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+              className={`py-3 rounded-lg text-base font-bold transition-colors ${
                 type === 'bhains' ? 'bg-blue-500 text-white' : 'bg-emerald-950/60 text-emerald-400 border border-emerald-700'
               }`}
             >
