@@ -22,4 +22,4 @@ export interface Animal {
   createdAt: number
 }
 
-export type Tab = 'home' | 'entry' | 'stats' | 'animals'
+export type Tab = 'home' | 'entry' | 'stats'

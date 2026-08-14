@@ -91,12 +91,12 @@ export default function HomeTab() {
 
       {animals.length === 0 && (
         <div className="bg-amber-950/40 border border-amber-800/30 rounded-xl p-4 text-center">
-          <p className="text-amber-300 text-sm font-semibold mb-2">📋 Pehle apne jaanwar add karo!</p>
+          <p className="text-amber-300 text-sm font-semibold mb-2">📋 Pehle Entry tab mein jao!</p>
           <button
-            onClick={() => setActiveTab('animals')}
+            onClick={() => setActiveTab('entry')}
             className="text-amber-400 underline text-sm"
           >
-            Janwar tab mein jao →
+            Entry tab mein jao →
           </button>
         </div>
       )}

@@ -10,6 +10,7 @@ interface StoreState {
   nextEntryId: number
   setActiveTab: (t: Tab) => void
   addAnimal: (name: string, type: Animal['type'], tagNumber?: string) => void
+  getOrCreateAnimal: (name: string, type: Animal['type']) => number
   removeAnimal: (id: number) => void
   addEntry: (e: Omit<MilkEntry, 'id' | 'createdAt'>) => void
   removeEntry: (id: number) => void
@@ -18,7 +19,7 @@ interface StoreState {
 
 export const useStore = create<StoreState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       animals: [],
       entries: [],
       activeTab: 'home',
@@ -32,6 +33,19 @@ export const useStore = create<StoreState>()(
           animals: [...s.animals, { id: s.nextAnimalId, name, type, tagNumber, createdAt: Date.now() }],
           nextAnimalId: s.nextAnimalId + 1,
         })),
+
+      getOrCreateAnimal: (name, type) => {
+        const existing = get().animals.find(
+          (a) => a.name.toLowerCase() === name.toLowerCase() && a.type === type,
+        )
+        if (existing) return existing.id
+        const newId = get().nextAnimalId
+        set((s) => ({
+          animals: [...s.animals, { id: newId, name, type, createdAt: Date.now() }],
+          nextAnimalId: newId + 1,
+        }))
+        return newId
+      },
 
       removeAnimal: (id) =>
         set((s) => ({

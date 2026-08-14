@@ -1,29 +1,32 @@
 import { useState } from 'react'
 import { useStore, todayStr, fmtDate } from '../store'
 import { Check, Trash2, Sunrise, Sunset } from 'lucide-react'
+import type { AnimalType } from '../types'
 
 export default function EntryTab() {
   const animals = useStore((s) => s.animals)
   const entries = useStore((s) => s.entries)
   const addEntry = useStore((s) => s.addEntry)
   const removeEntry = useStore((s) => s.removeEntry)
+  const getOrCreateAnimal = useStore((s) => s.getOrCreateAnimal)
 
   const [date, setDate] = useState(todayStr())
   const [session, setSession] = useState<'morning' | 'evening'>('morning')
-  const [animalId, setAnimalId] = useState<number | ''>('')
+  const [animalType, setAnimalType] = useState<AnimalType>('gaay')
+  const [animalName, setAnimalName] = useState('')
   const [liters, setLiters] = useState('')
   const [note, setNote] = useState('')
   const [saved, setSaved] = useState(false)
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const animal = animals.find((a) => a.id === animalId)
-    if (!animal || !liters) return
+    if (!animalName.trim() || !liters) return
+    const aid = getOrCreateAnimal(animalName.trim(), animalType)
     addEntry({
       date,
-      animalId: animal.id,
-      animalName: animal.name,
-      animalType: animal.type,
+      animalId: aid,
+      animalName: animalName.trim(),
+      animalType,
       session,
       liters: parseFloat(liters),
       note: note || undefined,
@@ -37,15 +40,6 @@ export default function EntryTab() {
   const dayEntries = entries
     .filter((e) => e.date === date)
     .sort((a, b) => (a.session === 'morning' ? -1 : 1) - (b.session === 'morning' ? -1 : 1))
-
-  if (animals.length === 0) {
-    return (
-      <div className="bg-amber-950/40 border border-amber-800/30 rounded-xl p-6 text-center">
-        <p className="text-amber-300 font-semibold mb-2">🐃 Pehle jaanwar add karo!</p>
-        <p className="text-emerald-500 text-sm">Janwar tab mein jao aur apni gaay/bhains add karo, fir entry kar sakte ho.</p>
-      </div>
-    )
-  }
 
   return (
     <div className="space-y-4">
@@ -70,39 +64,69 @@ export default function EntryTab() {
             <button
               type="button"
               onClick={() => setSession('morning')}
-              className={`flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+              className={`flex items-center justify-center gap-1.5 py-3 rounded-lg text-base font-bold transition-colors ${
                 session === 'morning' ? 'bg-amber-500 text-emerald-950' : 'bg-emerald-950/60 text-emerald-400 border border-emerald-700'
               }`}
             >
-              <Sunrise size={16} /> Subah
+              <Sunrise size={18} /> Subah
             </button>
             <button
               type="button"
               onClick={() => setSession('evening')}
-              className={`flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+              className={`flex items-center justify-center gap-1.5 py-3 rounded-lg text-base font-bold transition-colors ${
                 session === 'evening' ? 'bg-orange-500 text-emerald-950' : 'bg-emerald-950/60 text-emerald-400 border border-emerald-700'
               }`}
             >
-              <Sunset size={16} /> Shaam
+              <Sunset size={18} /> Shaam
             </button>
           </div>
         </div>
 
-        {/* Animal select */}
+        {/* Animal type + name */}
         <div>
-          <label className="text-emerald-400 text-xs font-semibold block mb-1">🐄 Janwar</label>
-          <select
-            value={animalId}
-            onChange={(e) => setAnimalId(e.target.value ? Number(e.target.value) : '')}
+          <label className="text-emerald-400 text-xs font-semibold block mb-1">Janwar</label>
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            <button
+              type="button"
+              onClick={() => setAnimalType('gaay')}
+              className={`py-3 rounded-lg text-base font-bold transition-colors ${
+                animalType === 'gaay' ? 'bg-amber-500 text-emerald-950' : 'bg-emerald-950/60 text-emerald-400 border border-emerald-700'
+              }`}
+            >
+              🐄 Gaay
+            </button>
+            <button
+              type="button"
+              onClick={() => setAnimalType('bhains')}
+              className={`py-3 rounded-lg text-base font-bold transition-colors ${
+                animalType === 'bhains' ? 'bg-blue-500 text-white' : 'bg-emerald-950/60 text-emerald-400 border border-emerald-700'
+              }`}
+            >
+              🐃 Bhains
+            </button>
+          </div>
+          <input
+            type="text"
+            value={animalName}
+            onChange={(e) => setAnimalName(e.target.value)}
+            placeholder={animalType === 'gaay' ? 'Gaay ka naam — jaise: Rani' : 'Bhains ka naam — jaise: Kaali'}
             className="w-full bg-emerald-950/60 text-white border border-emerald-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-amber-400"
-          >
-            <option value="">-- chuno --</option>
-            {animals.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.type === 'gaay' ? '🐄' : '🐃'} {a.name}
-              </option>
-            ))}
-          </select>
+          />
+          {/* Quick pick from existing */}
+          {animals.filter((a) => a.type === animalType).length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {animals.filter((a) => a.type === animalType).map((a) => (
+                <button
+                  key={a.id}
+                  type="button"
+                  onClick={() => setAnimalName(a.name)}
+                  className="bg-emerald-950/60 text-emerald-300 text-xs px-2.5 py-1 rounded-full border border-emerald-700 hover:border-amber-400 transition-colors"
+                >
+                  {a.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Liters */}

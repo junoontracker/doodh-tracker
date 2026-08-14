@@ -3,7 +3,6 @@ import BottomNav from './components/BottomNav'
 import HomeTab from './tabs/HomeTab'
 import EntryTab from './tabs/EntryTab'
 import StatsTab from './tabs/StatsTab'
-import AnimalsTab from './tabs/AnimalsTab'
 import { useStore } from './store'
 
 export default function App() {
@@ -17,7 +16,6 @@ export default function App() {
         {activeTab === 'home' && <HomeTab />}
         {activeTab === 'entry' && <EntryTab />}
         {activeTab === 'stats' && <StatsTab />}
-        {activeTab === 'animals' && <AnimalsTab />}
       </main>
 
       <BottomNav />

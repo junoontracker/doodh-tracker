@@ -1,4 +1,4 @@
-import { Home, ClipboardList, BarChart3, Beef } from 'lucide-react'
+import { Home, ClipboardList, BarChart3 } from 'lucide-react'
 import { useStore } from '../store'
 import type { Tab } from '../types'
 
@@ -6,7 +6,6 @@ const items: { key: Tab; label: string; icon: typeof Home }[] = [
   { key: 'home', label: 'Home', icon: Home },
   { key: 'entry', label: 'Entry', icon: ClipboardList },
   { key: 'stats', label: 'Stats', icon: BarChart3 },
-  { key: 'animals', label: 'Janwar', icon: Beef },
 ]
 
 export default function BottomNav() {
